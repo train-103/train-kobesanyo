@@ -219,7 +219,7 @@ async function fetchTrainData() {
 function isSpecial4000Rule(train) {
   const num = parseInt(train.no.match(/\d+/)?.[0] || 0, 10);
   const type = train.displayType || "";   // "特急" / "普通" / etc
-  const dest = train.dest;text || ""   // "敦賀" / "大阪" / etc
+  const dest = train.dest;|| ""   // "敦賀" / "大阪" / etc
 
   const is4000 = no >= 4000 && no < 5000;
   const is8000 = no >= 8000 && no < 9000;
@@ -427,6 +427,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
