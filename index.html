@@ -373,10 +373,12 @@ const stayMs = updateStay(trainKey, x, from === to);
     }
 
     // ×印：10分以上不動
-    if (stayMs >= 600000) {
-      ctx.fillStyle = "red";
-      ctx.fillText("×", leftX - 12, y);
-    }
+    // ×印：10分以上不動（修正版）
+if (stayMs >= 600000) {
+  ctx.fillStyle = "red";
+  const crossW = ctx.measureText("×").width;
+  ctx.fillText("×", leftX - crossW - 6, y);
+}
 
     ctx.fillStyle = "white";
     ctx.fillRect(leftX, y - h/2, totalW, h);
@@ -437,6 +439,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
