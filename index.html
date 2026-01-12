@@ -372,12 +372,29 @@ const stayMs = updateStay(trainKey, x, from === to);
       ctx.fillRect(leftX + totalW, y - h/2, 6, h);
     }
 
-    // ×印：10分以上不動
-    // ×印：10分以上不動（修正版）
+    // ×印：10分以上不動（赤丸＋黒枠＋白×）
 if (stayMs >= 600000) {
+  const r = 8; // 丸の半径
+  const cx = leftX - 20; // 列車枠から十分離す
+  const cy = y;
+
+  // 赤丸（塗り）
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = "red";
-  const crossW = ctx.measureText("×").width;
-  ctx.fillText("×", leftX - crossW - 6, y);
+  ctx.fill();
+
+  // 黒枠
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // 白い×
+  ctx.fillStyle = "white";
+  ctx.font = "12px monospace";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("×", cx, cy);
 }
 
     ctx.fillStyle = "white";
@@ -439,6 +456,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
