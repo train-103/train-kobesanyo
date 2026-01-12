@@ -213,12 +213,6 @@ async function fetchTrainData() {
   }
   return lastTrains;
 }
-// ★ ニックネームが「サンダーバード」のみ true
-function isThunderbird(train) {
-  const nickname = train.nickname || "";
-  return nickname === "サンダーバード";
-}
-
 
 // ===============================
 // サンダーバード判定
@@ -451,6 +445,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
