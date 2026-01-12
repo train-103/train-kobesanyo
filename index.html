@@ -183,12 +183,22 @@ async function fetchTrainData() {
   }
   return lastTrains;
 }
-// ★ 4000番台かつ特急のみ true
+// ★ 4000 / 8000 番台 + 特急 + 行先（敦賀 or 大阪）のみ true
 function is4000LtdExpress(train) {
   const num = parseInt(train.no.match(/\d+/)?.[0] || 0, 10);
   const type = train.displayType || "";
-  return num >= 4000 && num < 5000 && type.includes("特急");
+  const dest = train.dest?.text || "";
+
+  const isTargetNumber =
+    (num >= 4000 && num < 5000) ||
+    (num >= 8000 && num < 9000);
+
+  const isTargetDest =
+    dest.includes("敦賀") || dest.includes("大阪");
+
+  return isTargetNumber && type.includes("特急") && isTargetDest;
 }
+
 
 // ===============================
 // 方向・線路判定（確定版）
@@ -378,6 +388,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
