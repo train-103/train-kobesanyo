@@ -213,26 +213,24 @@ async function fetchTrainData() {
   }
   return lastTrains;
 }
-// ★ 4000番台【特急のみ】
-// ★ 8000番台【敦賀／大阪のみ】
-// → どちらかに当てはまれば true
+// ★ 4000番台ルールを適用するかどうかの最終判定
 function isSpecial4000Rule(train) {
   const num = parseInt(train.no.match(/\d+/)?.[0] || 0, 10);
   const type = train.displayType || "";
   const dest = train.dest?.text || "";
 
+  const isLtdExp = type.includes("特急");
   const is4000 = num >= 4000 && num < 5000;
   const is8000 = num >= 8000 && num < 9000;
-  const isLtdExp = type.includes("特急");
   const isTsurugaOrOsaka =
     dest.includes("敦賀") || dest.includes("大阪");
 
+  // ★ 条件まとめ
   return (
     (is4000 && isLtdExp) ||
-    (is8000 && isTsurugaOrOsaka)
+    (is8000 && isLtdExp && isTsurugaOrOsaka)
   );
 }
-
 
 
 // ===============================
@@ -429,6 +427,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
