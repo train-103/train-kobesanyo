@@ -225,7 +225,7 @@ function isThunderbird(train) {
 // 列番最終数字取得
 // ===============================
 function getLastDigit(train) {
-  const m = String(train.no || "").match(/(\d)$/);
+  const m = String(train.no || "").match(/(\d)(?!.*\d)/);
   return m ? Number(m[1]) : null;
 }
 
@@ -447,6 +447,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
