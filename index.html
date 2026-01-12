@@ -102,7 +102,7 @@ const ctx = canvas.getContext("2d");
 const trackStartX = Math.min(...stations.map(s => s.x)) - TRACK_MARGIN;
 const trackEndX   = Math.max(...stations.map(s => s.x)) + TRACK_MARGIN;
 
-bg.width = canvas.width = trackEndX + 50;
+bg.width = canvas.width = trackEndX;
 bg.height = canvas.height = 800;
 
 
@@ -423,6 +423,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
