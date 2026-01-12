@@ -347,13 +347,12 @@ const slot = `${trackKey}_${sectionKey}`;
 
     const noText = train.no;
 
-// ★ 両数（最大14）
-const cars = train.cars || train.carCount || 0;
+// ★ 両数取得（numberOfCars）
+const cars = Number(train.numberOfCars) || 0;
 const carsText = carsToCircle(cars);
 
-// ★ 行き先＋両数
-const infoText = ` ${type} ${train.dest.text} ${carsText}`;
-
+// ★ 行き先＋両数（⑧など）を合成
+const infoText = ` ${type} ${train.dest.text}${carsText}`;
 
     const noW = ctx.measureText(noText).width + 10;
     const infoW = ctx.measureText(infoText).width + 10;
@@ -438,6 +437,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
