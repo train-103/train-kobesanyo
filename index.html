@@ -237,30 +237,50 @@ function getDirection(train, from, to) {
   return "down";
 }
 
-function getTrackKey(train, direction) {
+// ===============================
+// サンダーバード判定
+// ===============================
+function isThunderbird(train) {
+  return String(train.nickname || "").includes("サンダーバード");
+}
+
+// ===============================
+// 列番最終数字取得
+// ===============================
+function getLastDigit(train) {
+  const m = String(train.no || "").match(/(\d)$/);
+  return m ? Number(m[1]) : null;
+}
+
+// ===============================
+// 線路判定（最終確定版）
+// ===============================
+function getTrackKey(train) {
+  const last = getLastDigit(train);
+  if (last === null) return "up1"; // 保険
+
   const type = train.displayType || "";
 
-  // ===============================
   // ★ サンダーバード専用ルール
-  // ===============================
   if (isThunderbird(train)) {
-    const num = parseInt(train.no.match(/\d+/)?.[0] || 0, 10);
-    return (num % 2 === 1) ? "down2" : "up1";
+    return (last % 2 === 1) ? "down2" : "up1";
   }
 
-  // ===============================
   // ★ 通常ルール
-  // ===============================
-  const isRapidLocal =
-    (type.includes("快速") && !type.includes("新快速")) ||
-    type.includes("普通");
+  const isOdd = last % 2 === 1; // 奇数＝上り
+  const isLocal =
+    type.includes("普通") ||
+    (type.includes("快速") && !type.includes("新快速"));
 
-  if (direction === "up") {
-    return isRapidLocal ? "up2" : "up1";
+  if (isOdd) {
+    // 上り
+    return isLocal ? "up2" : "up1";
   } else {
-    return isRapidLocal ? "down1" : "down2";
+    // 下り
+    return isLocal ? "down1" : "down2";
   }
 }
+
 
 // ===============================
 // 停滞管理（localStorage）
@@ -297,7 +317,7 @@ function drawTrains(trains) {
     if (!s1 || !s2) return;
 
     const direction = getDirection(train, from, to);
-    const trackKey = getTrackKey(train, direction);
+    const trackKey = getTrackKey(train);
     const baseY = TRACK_Y[trackKey];
 
     const i1 = stations.indexOf(s1);
@@ -418,6 +438,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
