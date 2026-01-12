@@ -218,19 +218,21 @@ async function fetchTrainData() {
 // → どちらかに当てはまれば true
 function isSpecial4000Rule(train) {
   const num = parseInt(train.no.match(/\d+/)?.[0] || 0, 10);
-  const type = train.displayType || "";   // "特急" / "普通" / etc
-  const dest = train.dest;|| ""   // "敦賀" / "大阪" / etc
+  const type = train.displayType || "";
+  const dest = train.dest?.text || "";
 
-  const is4000 = no >= 4000 && no < 5000;
-  const is8000 = no >= 8000 && no < 9000;
+  const is4000 = num >= 4000 && num < 5000;
+  const is8000 = num >= 8000 && num < 9000;
   const isLtdExp = type.includes("特急");
-  const isTsurugaOrOsaka = dest.includes("敦賀") || dest.includes("大阪");
+  const isTsurugaOrOsaka =
+    dest.includes("敦賀") || dest.includes("大阪");
 
   return (
     (is4000 && isLtdExp) ||
     (is8000 && isTsurugaOrOsaka)
   );
 }
+
 
 
 // ===============================
@@ -427,6 +429,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
