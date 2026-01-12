@@ -239,14 +239,11 @@ function getDirection(train, from, to) {
 
 function getTrackKey(train, direction) {
   const type = train.displayType || "";
-  const nickname = train.nickname || "";
 
   // ===============================
   // ★ サンダーバード専用ルール
-  // （旧4000番台ルール）
   // ===============================
-  if (nickname.includes("サンダーバード")) {
-    // 奇数 → 下線2 / 偶数 → 上線1
+  if (isThunderbird(train)) {
     const num = parseInt(train.no.match(/\d+/)?.[0] || 0, 10);
     return (num % 2 === 1) ? "down2" : "up1";
   }
@@ -264,7 +261,6 @@ function getTrackKey(train, direction) {
     return isRapidLocal ? "down1" : "down2";
   }
 }
-
 
 // ===============================
 // 停滞管理（localStorage）
@@ -422,6 +418,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
