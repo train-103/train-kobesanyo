@@ -288,6 +288,17 @@ function updateStay(trainKey, x, isStation) {
 }
 
 // ===============================
+// 両数 → 丸数字（①〜⑭）変換
+// ===============================
+function carsToCircle(num) {
+  const circles = [
+    "", "①","②","③","④","⑤","⑥","⑦",
+    "⑧","⑨","⑩","⑪","⑫","⑬","⑭"
+  ];
+  return circles[num] || "";
+}
+
+// ===============================
 function drawTrains(trains) {
   const used = {};
   ctx.font = "12px monospace";
@@ -335,7 +346,14 @@ const slot = `${trackKey}_${sectionKey}`;
     const delayText = delay > 0 ? String(delay) : "";
 
     const noText = train.no;
-    const infoText = ` ${type} ${train.dest.text}`;
+
+// ★ 両数（最大14）
+const cars = train.cars || train.carCount || 0;
+const carsText = carsToCircle(cars);
+
+// ★ 行き先＋両数
+const infoText = ` ${type} ${train.dest.text} ${carsText}`;
+
 
     const noW = ctx.measureText(noText).width + 10;
     const infoW = ctx.measureText(infoText).width + 10;
@@ -420,6 +438,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
