@@ -213,25 +213,23 @@ async function fetchTrainData() {
   }
   return lastTrains;
 }
-// ★ 4000 / 8000 番台 + 特急 + 行先（敦賀 or 大阪）のみ true
-function is4000LtdExpress(train) {
+// ★ 4000番台【特急のみ】
+// ★ 8000番台【敦賀／大阪のみ】
+// → どちらかに当てはまれば true
+function isSpecial4000Rule(train) {
   const no = train.no;
-const type = train.type;     // "特急" / "普通" / etc
-const dest = train.dest;     // "敦賀" / "大阪" / etc
+  const type = train.type;   // "特急" / "普通" / etc
+  const dest = train.dest;   // "敦賀" / "大阪" / etc
 
-const is4000 = no >= 4000 && no < 5000;
-const is8000 = no >= 8000 && no < 9000;
-const isLtdExp = type === "特急";
-const isTsurugaOrOsaka = dest === "敦賀" || dest === "大阪";
+  const is4000 = no >= 4000 && no < 5000;
+  const is8000 = no >= 8000 && no < 9000;
+  const isLtdExp = type === "特急";
+  const isTsurugaOrOsaka = dest === "敦賀" || dest === "大阪";
 
-if (is4000 && isLtdExp) {
-  // ★ 4000番台ルール（特急のみ）
-}
-else if (is8000 && isTsurugaOrOsaka) {
-  // ★ 8000番台ルール（敦賀 or 大阪のみ）
-}
-else {
-  // ★ 通常ルール
+  return (
+    (is4000 && isLtdExp) ||
+    (is8000 && isTsurugaOrOsaka)
+  );
 }
 
 
@@ -254,12 +252,13 @@ function getTrackKey(train, direction) {
   const num = parseInt(train.no.match(/\d+/)?.[0] || 0, 10);
   const last = num % 10;
 
-  // ===============================
-  // ★ 4000番台【特急のみ】専用ルール
-  // ===============================
-  if (is4000LtdExpress(train)) {
-    return (last % 2 === 1) ? "down2" : "up1";
-  }
+ // ===============================
+// ★ 4000番台【特急のみ】
+// ★ 8000番台【敦賀／大阪のみ】
+// ===============================
+if (isSpecial4000Rule(train)) {
+  return (last % 2 === 1) ? "down2" : "up1";
+}
 
   const isRapidLocal =
     (type.includes("快速") && !type.includes("新快速")) ||
@@ -428,6 +427,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
