@@ -299,7 +299,6 @@ function drawTrains(trains) {
     const s2 = stations.find(s => s.code === to);
     if (!s1 || !s2) return;
 
-    const direction = getDirection(train, from, to);
     const trackKey = getTrackKey(train);
     const baseY = TRACK_Y[trackKey];
 
@@ -421,6 +420,7 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
