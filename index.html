@@ -162,6 +162,12 @@ document.getElementById("panel").addEventListener("click", e => {
     }
   });
 });
+// ★ スクロール位置を保存（手動更新対策）
+const scrollContainer = document.getElementById("scroll-container");
+
+scrollContainer.addEventListener("scroll", () => {
+  localStorage.setItem("scrollLeft", scrollContainer.scrollLeft);
+});
 
 
 // ===============================
@@ -388,11 +394,17 @@ if (lastTrains.length > 0) {
 }
 
 drawBackground();
+  // ★ 保存されているスクロール位置を復元
+const savedScroll = localStorage.getItem("scrollLeft");
+if (savedScroll !== null) {
+  document.getElementById("scroll-container").scrollLeft = Number(savedScroll);
+}
 update();
 setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
 
