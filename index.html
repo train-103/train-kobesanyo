@@ -215,10 +215,14 @@ async function fetchTrainData() {
 }
 
 // ===============================
-// サンダーバード判定
+// サンダーバード、ひだ判定
 // ===============================
-function isThunderbird(train) {
-  return String(train.nickname || "").includes("サンダーバード");
+function isSpecialLtdExp(train) {
+  const name = String(train.nickname || "");
+  return (
+    name.includes("サンダーバード") ||
+    name.includes("ひだ")
+  );
 }
 
 // ===============================
@@ -246,10 +250,10 @@ function getTrackKey(train) {
 
   const type = train.displayType || "";
 
-  // ★ サンダーバード専用ルール
-  if (isThunderbird(train)) {
-    return (last % 2 === 1) ? "down2" : "up1";
-  }
+  // ★ サンダーバード、ひだ専用ルール
+  if (isSpecialLtdExp(train)) {
+  return (last % 2 === 1) ? "down2" : "up1";
+}
 
   // ★ 通常ルール
   const isOdd = last % 2 === 1; // 奇数＝上り
@@ -515,6 +519,7 @@ setInterval(update, 45000);
 </script>
 </body>
 </html>
+
 
 
 
