@@ -218,7 +218,7 @@ async function fetchTrainData() {
 // サンダーバード判定
 // ===============================
 function isThunderbird(train) {
-  return String(train.nickname || "").includes("サンダーバード");
+  return String(train.nickname || "").includes("サンダーバード","ひだ");
 }
 
 // ===============================
@@ -511,6 +511,7 @@ setInterval(update, 45000);
 </script>
 </body>
 </html>
+
 
 
 
