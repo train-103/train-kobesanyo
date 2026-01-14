@@ -299,7 +299,13 @@ function drawTrains(trains) {
 
   trains.forEach(train => {
     const [from, toRaw] = train.pos.split("_");
-    const to = (toRaw === "####") ? from : toRaw;
+
+// ★ 停車中判定（今回の修正ポイント）
+const isStationary = (toRaw === "####");
+
+// ★ 描画用の to（駅間計算用）
+const to = isStationary ? from : toRaw;
+
     const s1 = stations.find(s => s.code === from);
     const s2 = stations.find(s => s.code === to);
     if (!s1 || !s2) return;
@@ -445,3 +451,4 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
