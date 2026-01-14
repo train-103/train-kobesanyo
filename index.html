@@ -362,18 +362,19 @@ const infoText = ` ${type} ${train.dest.text}${carsText}`;
     const leftX = x - totalW / 2;
 
     const trainKey = train.no + "_" + train.pos;
-const stayMs = updateStay(trainKey, x, from === to);
+const stayMs = updateStay(trainKey, x, isStationary);
+
 
 
     // 赤帯：1分以上駅直上
-    if (from === to && stayMs >= 60000) {
+    if (isStationary && stayMs >= 60000) {
       ctx.fillStyle = "red";
       ctx.fillRect(leftX - 6, y - h/2, 6, h);
       ctx.fillRect(leftX + totalW, y - h/2, 6, h);
     }
 
     // ×印：10分以上不動（赤丸＋黒枠＋白×）
-if (stayMs >= 600000) {
+if (isStationary && stayMs >= 600000) {
   const r = 8; // 丸の半径
   const cx = leftX - 20; // 列車枠から十分離す
   const cy = y;
@@ -451,4 +452,5 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
