@@ -194,7 +194,6 @@ scrollContainer.addEventListener("scroll", () => {
 // ===============================
 let lastTrains = [];
 let fetching = false;
-let firstObservationDone = false;
 
 async function fetchTrainData() {
   if (fetching) return lastTrains;
@@ -228,6 +227,14 @@ function isThunderbird(train) {
 function getLastDigit(train) {
   const m = String(train.no || "").match(/(\d)(?!.*\d)/);
   return m ? Number(m[1]) : null;
+}
+
+// ===============================
+// 普通列車判定
+// ===============================
+function isLocalTrain(train) {
+  const type = train.displayType || "";
+  return type.includes("普通");
 }
 
 // ===============================
@@ -266,6 +273,10 @@ function getTrackKey(train) {
 const stayMap = JSON.parse(localStorage.getItem("stayMap") || "{}");
 const crossMap = JSON.parse(localStorage.getItem("crossMap") || "{}");
 
+const redBandMap = JSON.parse(
+  localStorage.getItem("redBandMap") || "{}"
+);
+  
 function updateStay(trainKey, x, isStation) {
   const now = Date.now();
   const s = stayMap[trainKey] || { x, t: now, station: isStation };
@@ -370,12 +381,51 @@ if (stayMs >= 600000) {
   localStorage.setItem("crossMap", JSON.stringify(crossMap));
 }
 
-    // 赤帯：1分以上駅直上
-    if (isStationary && firstObservationDone) {
+    // 赤帯関連
+const isLocal = isLocalTrain(train);
+let showRedBand = false;
+
+// ===============================
+// 普通：駅停車なら即赤帯
+// ===============================
+if (isLocal && isStationary) {
+  showRedBand = true;
+}
+
+// ===============================
+// 普通以外：交互45秒判定
+// ===============================
+if (!isLocal && isStationary) {
+  const r = redBandMap[trainKey] || {
+    phase: "record", // record → check → record → check
+    baseX: x
+  };
+
+  if (r.phase === "record") {
+    // 基準位置を記録するだけ
+    r.baseX = x;
+    r.phase = "check";
+  } else {
+    // 比較フェーズ
+    if (Math.abs(r.baseX - x) < 5) {
+      showRedBand = true;
+    }
+    r.phase = "record";
+  }
+
+  redBandMap[trainKey] = r;
+  localStorage.setItem("redBandMap", JSON.stringify(redBandMap));
+}
+
+// ===============================
+// 赤帯描画
+// ===============================
+if (showRedBand) {
   ctx.fillStyle = "red";
   ctx.fillRect(leftX - 6, y - h/2, 6, h);
   ctx.fillRect(leftX + totalW, y - h/2, 6, h);
 }
+    
 
     // ×印：10分以上不動（赤丸＋黒枠＋白×）
 if (crossMap[trainKey]) {
@@ -451,19 +501,12 @@ const savedScroll = localStorage.getItem("scrollLeft");
 if (savedScroll !== null) {
   document.getElementById("scroll-container").scrollLeft = Number(savedScroll);
 }
-update(); // 初回即描画
-
-// 15秒後に観測確定＋更新周期切り替え
-setTimeout(() => {
-  firstObservationDone = true;
-  update(); // 15秒時点で一度判定
-
-  setInterval(update, 45000); // 以降45秒更新
-}, 15000);
-
+update(); 
+setInterval(update, 45000);
 </script>
 </body>
 </html>
+
 
 
 
