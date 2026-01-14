@@ -194,6 +194,7 @@ scrollContainer.addEventListener("scroll", () => {
 // ===============================
 let lastTrains = [];
 let fetching = false;
+let firstObservationDone = false;
 
 async function fetchTrainData() {
   if (fetching) return lastTrains;
@@ -263,6 +264,7 @@ function getTrackKey(train) {
 // 停滞管理（localStorage）
 // ===============================
 const stayMap = JSON.parse(localStorage.getItem("stayMap") || "{}");
+const crossMap = JSON.parse(localStorage.getItem("crossMap") || "{}");
 
 function updateStay(trainKey, x, isStation) {
   const now = Date.now();
@@ -363,18 +365,20 @@ const infoText = ` ${type} ${train.dest.text}${carsText}`;
 
     const trainKey = train.no + "_" + train.pos;
 const stayMs = updateStay(trainKey, x, isStationary);
-
-
+if (stayMs >= 600000) {
+  crossMap[trainKey] = true;
+  localStorage.setItem("crossMap", JSON.stringify(crossMap));
+}
 
     // 赤帯：1分以上駅直上
-    if (from === to) {
-      ctx.fillStyle = "red";
-      ctx.fillRect(leftX - 6, y - h/2, 6, h);
-      ctx.fillRect(leftX + totalW, y - h/2, 6, h);
-    }
+    if (isStationary && firstObservationDone) {
+  ctx.fillStyle = "red";
+  ctx.fillRect(leftX - 6, y - h/2, 6, h);
+  ctx.fillRect(leftX + totalW, y - h/2, 6, h);
+}
 
     // ×印：10分以上不動（赤丸＋黒枠＋白×）
-if (stayMs >= 600000) {
+if (crossMap[trainKey]) {
   const r = 8; // 丸の半径
   const cx = leftX - 20; // 列車枠から十分離す
   const cy = y;
@@ -447,11 +451,20 @@ const savedScroll = localStorage.getItem("scrollLeft");
 if (savedScroll !== null) {
   document.getElementById("scroll-container").scrollLeft = Number(savedScroll);
 }
-update();
-setInterval(update, 60000);
+update(); // 初回即描画
+
+// 15秒後に観測確定＋更新周期切り替え
+setTimeout(() => {
+  firstObservationDone = true;
+  update(); // 15秒時点で一度判定
+
+  setInterval(update, 45000); // 以降45秒更新
+}, 15000);
+
 </script>
 </body>
 </html>
+
 
 
 
