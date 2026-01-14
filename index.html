@@ -374,7 +374,7 @@ const stayMs = updateStay(trainKey, x, isStationary);
     }
 
     // ×印：10分以上不動（赤丸＋黒枠＋白×）
-if (isStationary && stayMs >= 600000) {
+if (stayMs >= 600000) {
   const r = 8; // 丸の半径
   const cx = leftX - 20; // 列車枠から十分離す
   const cy = y;
@@ -387,7 +387,7 @@ if (isStationary && stayMs >= 600000) {
 
   // 白い×
   ctx.fillStyle = "white";
-  ctx.font = "12px monospace";
+  ctx.font = "bold 15px monospace";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("×", cx, cy);
@@ -452,5 +452,6 @@ setInterval(update, 60000);
 </script>
 </body>
 </html>
+
 
 
