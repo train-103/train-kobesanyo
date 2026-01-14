@@ -406,12 +406,17 @@ if (!isLocal && isStationary) {
     r.baseX = x;
     r.phase = "check";
   } else {
-    // 比較フェーズ
-    if (Math.abs(r.baseX - x) < 5) {
-      showRedBand = true;
-    }
+  // check フェーズ
+  if (Math.abs(r.baseX - x) < 5) {
+    showRedBand = true;
+
+    // ★ 赤帯を出した場合は phase を維持
+    // 次の更新まで保持する
+  } else {
+    // 動いていたら記録フェーズへ戻す
     r.phase = "record";
   }
+}
 
   redBandMap[trainKey] = r;
   localStorage.setItem("redBandMap", JSON.stringify(redBandMap));
@@ -506,6 +511,7 @@ setInterval(update, 45000);
 </script>
 </body>
 </html>
+
 
 
 
