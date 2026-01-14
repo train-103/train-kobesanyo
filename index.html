@@ -436,22 +436,26 @@ if (showRedBand) {
 
     // ×印：10分以上不動（赤丸＋黒枠＋白×）
 if (crossMap[trainKey]) {
-  const r = 8; // 丸の半径
-  const cx = leftX - 20; // 列車枠から十分離す
+  ctx.save();  // ← これが重要
+
+  const r = 8;
+  const cx = leftX - 20;
   const cy = y;
 
-  // 赤丸（塗り）
+  // 赤丸
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = "red";
   ctx.fill();
 
-  // 白い×
+  // ×印（太字）
   ctx.fillStyle = "white";
   ctx.font = "bold 15px monospace";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("×", cx, cy);
+
+  ctx.restore(); // ← 状態を完全に戻す
 }
 
     ctx.fillStyle = "white";
@@ -513,6 +517,7 @@ setInterval(update, 45000);
 </script>
 </body>
 </html>
+
 
 
 
