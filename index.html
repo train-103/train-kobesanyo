@@ -380,6 +380,11 @@ const infoText = ` ${type} ${train.dest.text}${carsText}`;
 
     const trainKey = train.no + "_" + train.pos;
 const stayMs = updateStay(trainKey, x, isStationary);
+// ★ 追加：駅中心からの距離判定（複合判定用）
+const stationX = s1.x;
+const distFromStation = Math.abs(x - stationX);
+const STATION_STOP_RADIUS = 5; // px
+const isNearStationCenter = distFromStation <= STATION_STOP_RADIUS;
 if (stayMs >= 600000) {
   crossMap[trainKey] = true;
   localStorage.setItem("crossMap", JSON.stringify(crossMap));
@@ -390,18 +395,18 @@ const isLocal = isLocalTrain(train);
 let showRedBand = false;
 
 // ===============================
-// 普通：駅停車なら即赤帯
+// 普通：駅中心に停車していれば即赤帯
 // ===============================
-if (isLocal && isStationary) {
+if (isLocal && isStationary && isNearStationCenter) {
   showRedBand = true;
 }
 
 // ===============================
-// 普通以外：交互45秒判定
+// 普通以外：交互45秒判定（駅中心限定）
 // ===============================
-if (!isLocal && isStationary) {
+if (!isLocal && isStationary && isNearStationCenter) {
   const r = redBandMap[trainKey] || {
-    phase: "record", // record → check → record → check
+    phase: "record",
     baseX: x
   };
 
@@ -519,3 +524,4 @@ setInterval(update, 45000);
 </script>
 </body>
 </html>
+
