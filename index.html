@@ -281,20 +281,26 @@ const redBandMap = JSON.parse(
   localStorage.getItem("redBandMap") || "{}"
 );
   
-function updateStay(trainKey, x, isStation) {
+function updateStay(trainKey, pos) {
   const now = Date.now();
-  const s = stayMap[trainKey] || { x, t: now, station: isStation };
+  const s = stayMap[trainKey] || { pos: pos, t: now };
 
-  if (Math.abs(s.x - x) < 5 && s.station === isStation) {
-    // 継続
+  if (s.pos === pos) {
+    // 同じpos → 継続
   } else {
-    s.x = x;
+    // posが変わったらリセット
+    s.pos = pos;
     s.t = now;
-    s.station = isStation;
+
+    // ★ ×を即解除
+    delete crossMap[trainKey];
   }
 
   stayMap[trainKey] = s;
+
   localStorage.setItem("stayMap", JSON.stringify(stayMap));
+  localStorage.setItem("crossMap", JSON.stringify(crossMap));
+
   return now - s.t;
 }
 
@@ -378,8 +384,9 @@ const infoText = ` ${type} ${train.dest.text}${carsText}`;
     const totalW = noW + infoW + delayW;
     const leftX = x - totalW / 2;
 
-    const trainKey = train.no + "_" + train.pos;
-const stayMs = updateStay(trainKey, x, isStationary);
+    const trainKey = train.no;
+const stayMs = updateStay(trainKey, train.pos);
+
 // ★ 追加：駅中心からの距離判定（複合判定用）
 const stationX = s1.x;
 const distFromStation = Math.abs(x - stationX);
@@ -387,8 +394,11 @@ const STATION_STOP_RADIUS = 5; // px
 const isNearStationCenter = distFromStation <= STATION_STOP_RADIUS;
 if (stayMs >= 600000) {
   crossMap[trainKey] = true;
-  localStorage.setItem("crossMap", JSON.stringify(crossMap));
+} else {
+  delete crossMap[trainKey];
 }
+
+localStorage.setItem("crossMap", JSON.stringify(crossMap));
 
     // 赤帯関連
 const isLocal = isLocalTrain(train);
@@ -524,5 +534,6 @@ setInterval(update, 30000);
 </script>
 </body>
 </html>
+
 
 
